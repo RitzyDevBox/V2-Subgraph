@@ -4,11 +4,12 @@ import { Bundle, Pair, PairDayData, Token, TokenDayData, UniswapDayData, Uniswap
 import { PairHourData } from './../types/schema'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from './helpers'
 
+const SECONDS_IN_DAY = 86400
 export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
   let uniswap = UniswapFactory.load(FACTORY_ADDRESS)
   let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
+  let dayID = timestamp / SECONDS_IN_DAY
+  let dayStartTimestamp = dayID * SECONDS_IN_DAY
   let uniswapDayData = UniswapDayData.load(dayID.toString())
   if (uniswapDayData === null) {
     uniswapDayData = new UniswapDayData(dayID.toString())
@@ -30,8 +31,8 @@ export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
 
 export function updatePairDayData(event: ethereum.Event): PairDayData {
   let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
+  let dayID = timestamp / SECONDS_IN_DAY
+  let dayStartTimestamp = dayID * SECONDS_IN_DAY
   let dayPairID = event.address
     .toHexString()
     .concat('-')
@@ -93,8 +94,8 @@ export function updatePairHourData(event: ethereum.Event): PairHourData {
 export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDayData {
   let bundle = Bundle.load('1')
   let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
+  let dayID = timestamp / SECONDS_IN_DAY
+  let dayStartTimestamp = dayID * SECONDS_IN_DAY
   let tokenDayID = token.id
     .toString()
     .concat('-')
