@@ -1,12 +1,12 @@
 /* eslint-disable prefer-const */
 import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
-import { Bundle, Pair, PairDayData, Token, TokenDayData, UniswapDayData, UniswapFactory } from '../types/schema'
-import { PairHourData } from './../types/schema'
+import { Bundle, Pair, PairDayData, Token, TokenDayData, UniswapDayData, UniswapFactory } from '../../generated/schema'
+import { PairHourData } from '../../generated/schema'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from './helpers'
 
 const SECONDS_IN_DAY = 86400
 export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
-  let uniswap = UniswapFactory.load(FACTORY_ADDRESS)
+  let uniswap = UniswapFactory.load(FACTORY_ADDRESS)!
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / SECONDS_IN_DAY
   let dayStartTimestamp = dayID * SECONDS_IN_DAY
@@ -37,7 +37,7 @@ export function updatePairDayData(event: ethereum.Event): PairDayData {
     .toHexString()
     .concat('-')
     .concat(BigInt.fromI32(dayID).toString())
-  let pair = Pair.load(event.address.toHexString())
+  let pair = Pair.load(event.address.toHexString())!
   let pairDayData = PairDayData.load(dayPairID)
   if (pairDayData === null) {
     pairDayData = new PairDayData(dayPairID)
@@ -69,7 +69,7 @@ export function updatePairHourData(event: ethereum.Event): PairHourData {
     .toHexString()
     .concat('-')
     .concat(BigInt.fromI32(hourIndex).toString())
-  let pair = Pair.load(event.address.toHexString())
+  let pair = Pair.load(event.address.toHexString())!
   let pairHourData = PairHourData.load(hourPairID)
   if (pairHourData === null) {
     pairHourData = new PairHourData(hourPairID)
@@ -92,7 +92,7 @@ export function updatePairHourData(event: ethereum.Event): PairHourData {
 }
 
 export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDayData {
-  let bundle = Bundle.load('1')
+  let bundle = Bundle.load('1')!
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / SECONDS_IN_DAY
   let dayStartTimestamp = dayID * SECONDS_IN_DAY
@@ -106,14 +106,14 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
     tokenDayData = new TokenDayData(tokenDayID)
     tokenDayData.date = dayStartTimestamp
     tokenDayData.token = token.id
-    tokenDayData.priceUSD = token.derivedETH.times(bundle.ethPrice)
+    tokenDayData.priceUSD = token.derivedETH!.times(bundle.ethPrice)
     tokenDayData.dailyVolumeToken = ZERO_BD
     tokenDayData.dailyVolumeETH = ZERO_BD
     tokenDayData.dailyVolumeUSD = ZERO_BD
     tokenDayData.dailyTxns = ZERO_BI
     tokenDayData.totalLiquidityUSD = ZERO_BD
   }
-  tokenDayData.priceUSD = token.derivedETH.times(bundle.ethPrice)
+  tokenDayData.priceUSD = token.derivedETH!.times(bundle.ethPrice)
   tokenDayData.totalLiquidityToken = token.totalLiquidity
   tokenDayData.totalLiquidityETH = token.totalLiquidity.times(token.derivedETH as BigDecimal)
   tokenDayData.totalLiquidityUSD = tokenDayData.totalLiquidityETH.times(bundle.ethPrice)

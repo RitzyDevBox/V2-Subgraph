@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Pair, Token, Bundle } from '../types/schema'
+import { Pair, Token, Bundle } from '../../generated/schema'
 import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, UNTRACKED_PAIRS } from './helpers'
 
@@ -77,13 +77,16 @@ export function findEthPerToken(token: Token): BigDecimal {
     let pairAddress = factoryContract.getPair(Address.fromString(token.id), Address.fromString(WHITELIST[i]))
     if (pairAddress.toHexString() != ADDRESS_ZERO) {
       let pair = Pair.load(pairAddress.toHexString())
+      if(!pair) {
+        return ZERO_BD
+      }
       if (pair.token0 == token.id && pair.reserveETH.gt(MINIMUM_LIQUIDITY_THRESHOLD_ETH)) {
         let token1 = Token.load(pair.token1)
-        return pair.token1Price.times(token1.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
+        return pair.token1Price.times(token1!.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
       }
       if (pair.token1 == token.id && pair.reserveETH.gt(MINIMUM_LIQUIDITY_THRESHOLD_ETH)) {
         let token0 = Token.load(pair.token0)
-        return pair.token0Price.times(token0.derivedETH as BigDecimal) // return token0 per our token * ETH per token 0
+        return pair.token0Price.times(token0!.derivedETH as BigDecimal) // return token0 per our token * ETH per token 0
       }
     }
   }
@@ -104,8 +107,8 @@ export function getTrackedVolumeUSD(
   pair: Pair
 ): BigDecimal {
   let bundle = Bundle.load('1')
-  let price0 = token0.derivedETH.times(bundle.ethPrice)
-  let price1 = token1.derivedETH.times(bundle.ethPrice)
+  let price0 = token0.derivedETH!.times(bundle!.ethPrice)
+  let price1 = token1.derivedETH!.times(bundle!.ethPrice)
 
   // dont count tracked volume on these pairs - usually rebass tokens
   if (UNTRACKED_PAIRS.includes(pair.id)) {
@@ -168,8 +171,8 @@ export function getTrackedLiquidityUSD(
   token1: Token
 ): BigDecimal {
   let bundle = Bundle.load('1')
-  let price0 = token0.derivedETH.times(bundle.ethPrice)
-  let price1 = token1.derivedETH.times(bundle.ethPrice)
+  let price0 = token0.derivedETH!.times(bundle!.ethPrice)
+  let price1 = token1.derivedETH!.times(bundle!.ethPrice)
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {

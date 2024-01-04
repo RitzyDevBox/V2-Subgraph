@@ -55,3 +55,14 @@ This query fetches aggredated data from all uniswap pairs and tokens, to give a 
   }
 }
 ```
+
+### Running Locally:
+
+GraphNode:
+https://docs.moonbeam.network/node-operators/indexer-nodes/thegraph-node/
+docker-compose up
+
+https://docs.moonbeam.network/builders/integrations/indexers/thegraph/#using-a-local-graph-node
+
+npx graph create {userName}/spookyswap-v2 --node http://127.0.0.1:8020
+npx graph deploy {userName}/spookyswap-v2 --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 
