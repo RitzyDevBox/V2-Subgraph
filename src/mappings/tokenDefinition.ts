@@ -24,13 +24,13 @@ export class TokenDefinition {
     let staticDefinitions = new Array<TokenDefinition>(6)
 
     // Add DGD
-    let tokenDGD = new TokenDefinition(
-      Address.fromString('0x841FAD6EAe12c286d1Fd18d1d525DFfA75C7EFFE'),
-      'BOO',
-      'BOO',
+    let tokenWBTT = new TokenDefinition(
+      Address.fromString('0x23181F21DEa5936e24163FFABa4Ea3B316B57f3C'),
+      'WBTT',
+      'WBTT',
       BigInt.fromI32(18)
     )
-    staticDefinitions.push(tokenDGD)
+    staticDefinitions.push(tokenWBTT)
 
     return staticDefinitions
   }
